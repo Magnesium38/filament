@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
 use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\Actions\ActionGroup;
 use Filament\Infolists\Components\Contracts\HasAffixActions;
 use Filament\Infolists\Components\Contracts\HasFooterActions;
 use Filament\Infolists\Components\Contracts\HasHeaderActions;
@@ -137,6 +138,14 @@ trait HasActions
             ];
         }
 
+        foreach ($this->cachedActions as $cachedAction) {
+            if ($cachedAction instanceof ActionGroup) {
+                foreach ($cachedAction->getFlatActions() as $action) {
+                    $this->cachedActions[$action->getName()] = $this->prepareAction($action);
+                }
+            }
+        }
+
         foreach ($this->actions as $registeredAction) {
             foreach (Arr::wrap($this->evaluate($registeredAction)) as $action) {
                 $this->cachedActions[$action->getName()] = $this->prepareAction($action);
@@ -146,7 +155,7 @@ trait HasActions
         return $this->cachedActions;
     }
 
-    public function prepareAction(Action $action): Action
+    public function prepareAction(Action | ActionGroup $action): Action | ActionGroup
     {
         return $action->component($this);
     }

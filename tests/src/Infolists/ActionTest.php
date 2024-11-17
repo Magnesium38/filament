@@ -94,3 +94,11 @@ it('can state whether a form component action exists', function () {
         ->assertInfolistActionExists('textEntry', 'exists')
         ->assertInfolistActionDoesNotExist('textEntry', 'doesNotExist');
 });
+
+it('can call an action within a group', function () {
+    livewire(Actions::class)
+        ->callInfolistAction('section', 'header-grouped')
+        ->assertDispatched('foo')
+        ->callInfolistAction('section', 'footer-grouped')
+        ->assertDispatched('bar');
+});

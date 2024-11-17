@@ -6,6 +6,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\Actions\ActionGroup;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
@@ -63,6 +65,24 @@ class Actions extends Component implements HasForms, HasInfolists
                         Action::make('urlNotInNewTab')
                             ->url('https://filamentphp.com'),
                         Action::make('exists'),
+                    ]),
+                Section::make()
+                    ->key('section')
+                    ->headerActions([
+                        ActionGroup::make([
+                            Action::make('header-grouped')
+                                ->action(function () {
+                                    $this->dispatch('foo');
+                                }),
+                        ]),
+                    ])
+                    ->footerActions([
+                        ActionGroup::make([
+                            Action::make('footer-grouped')
+                                ->action(function () {
+                                    $this->dispatch('bar');
+                                }),
+                        ]),
                     ]),
             ]);
     }
