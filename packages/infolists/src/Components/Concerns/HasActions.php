@@ -118,17 +118,27 @@ trait HasActions
         }
 
         if ($this instanceof HasFooterActions) {
-            $this->cachedActions = [
-                ...$this->cachedActions,
-                ...$this->getFooterActions(),
-            ];
+            foreach ($this->getFooterActions() as $key => $value) {
+                if ($value instanceof ActionGroup) {
+                    foreach ($value->getFlatActions() as $action) {
+                        $this->cachedActions[$action->getName()] = $this->prepareAction($action);
+                    }
+                } elseif (is_string($key)) {
+                    $this->cachedActions[$key] = $value;
+                }
+            }
         }
 
         if ($this instanceof HasHeaderActions) {
-            $this->cachedActions = [
-                ...$this->cachedActions,
-                ...$this->getHeaderActions(),
-            ];
+            foreach ($this->getHeaderActions() as $key => $value) {
+                if ($value instanceof ActionGroup) {
+                    foreach ($value->getFlatActions() as $action) {
+                        $this->cachedActions[$action->getName()] = $this->prepareAction($action);
+                    }
+                } elseif (is_string($key)) {
+                    $this->cachedActions[$key] = $value;
+                }
+            }
         }
 
         if ($this instanceof HasHintActions) {
@@ -136,14 +146,6 @@ trait HasActions
                 ...$this->cachedActions,
                 ...$this->getHintActions(),
             ];
-        }
-
-        foreach ($this->cachedActions as $cachedAction) {
-            if ($cachedAction instanceof ActionGroup) {
-                foreach ($cachedAction->getFlatActions() as $action) {
-                    $this->cachedActions[$action->getName()] = $this->prepareAction($action);
-                }
-            }
         }
 
         foreach ($this->actions as $registeredAction) {
